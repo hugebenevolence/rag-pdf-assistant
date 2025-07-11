@@ -22,7 +22,7 @@ Một hệ thống chatbot RAG (Retrieval-Augmented Generation) hiện đại v�
 
 ### 1. Clone repository
 ```bash
-git clone https://github.com/yourusername/rag-chatbot-pro.git
+git clone https://github.com/hugebenevolence/rag-pdf-assistant
 cd rag-chatbot-pro
 ```
 
