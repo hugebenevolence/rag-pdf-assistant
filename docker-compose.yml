@@ -1,0 +1,36 @@
+# docker-compose.yml
+
+version: '3.8'
+
+services:
+  rag-chatbot:
+    build: .
+    ports:
+      - "8501:8501"
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+    volumes:
+      - ./logs:/app/logs
+      - ./cache:/app/cache
+      - ./uploads:/app/uploads
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    
+  # Optional: Add a database for persistent storage
+  # postgres:
+  #   image: postgres:15
+  #   environment:
+  #     - POSTGRES_DB=rag_chatbot
+  #     - POSTGRES_USER=rag_user
+  #     - POSTGRES_PASSWORD=rag_password
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+
+# volumes:
+#   postgres_data:
