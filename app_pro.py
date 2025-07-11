@@ -1,5 +1,22 @@
 # app_pro.py
 
+# SQLite fix for Streamlit Cloud - MUST BE FIRST
+import sys
+import os
+
+# Fix SQLite version for ChromaDB on Streamlit Cloud
+try:
+    # Check if we're on Streamlit Cloud or similar environment
+    if 'STREAMLIT_CLOUD' in os.environ or 'streamlit' in sys.modules or os.path.exists('/mount/src'):
+        try:
+            import pysqlite3
+            sys.modules['sqlite3'] = pysqlite3
+            print("✅ SQLite fix applied for Streamlit Cloud")
+        except ImportError:
+            print("⚠️ pysqlite3 not available, using system sqlite3")
+except Exception as e:
+    print(f"⚠️ SQLite fix warning: {e}")
+
 import streamlit as st
 import tempfile
 import os
@@ -11,7 +28,7 @@ import json
 
 # Import các module đã cải tiến
 from modules.pdf_processor import PDFProcessor
-from modules.vector_store import VectorStore
+from modules.vector_store_fallback import SmartVectorStore
 from modules.llm_wrapper import LLMWrapper
 from modules.rag_pipeline import RAGPipeline
 from config import app_config
@@ -358,7 +375,7 @@ with col1:
                     status_text.text("🔍 Đang xây dựng vector store...")
                     progress_bar.progress(60)
                     
-                    vector = VectorStore(processor.embedding_model)
+                    vector = SmartVectorStore(processor.embedding_model)
                     retriever = vector.build_store(chunks)
                     
                     status_text.text("🤖 Đang khởi tạo LLM...")
@@ -616,6 +633,6 @@ st.markdown("""
 <div style="text-align: center; padding: 2rem; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); border-radius: 15px; color: white;">
     <h3>🚀 RAG Chatbot Pro</h3>
     <p>Powered by LangChain • OpenRouter • Streamlit</p>
-    <p>Made with ❤️ by HugeBenovelence</p>
+    <p>Made with ❤️ by HugeBenevolence</p>
 </div>
 """, unsafe_allow_html=True)
